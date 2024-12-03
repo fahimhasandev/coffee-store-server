@@ -24,6 +24,7 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect()
     const coffeeCollection = client.db("coffeeDB").collection("coffee")
+    const UserCollection = client.db("coffeeDB").collection("usrs")
 
     //POST - create
     app.post("/coffee", async (req, res) => {
@@ -75,6 +76,48 @@ async function run() {
       }
 
       const result = await coffeeCollection.updateOne(filter, coffee, options)
+      res.send(result)
+    })
+
+    //Users relatd APIS
+    app.post("/users", async (req, res) => {
+      const newUser = req.body
+      console.log(newUser)
+      const result = await UserCollection.insertOne(newUser)
+      res.send(result)
+    })
+
+    app.get("/users", async (req, res) => {
+      const result = await UserCollection.find().toArray()
+      res.send(result)
+    })
+
+    app.get("/users/:id", async (req, res) => {
+      const id = req.params.id
+      const query = { _id: new ObjectId(id) }
+      const result = await UserCollection.findOne(query)
+      res.send(result)
+    })
+
+    // email validaton
+    app.patch("/users", async (req, res) => {
+      const email = req.body.email
+      const filter = { email }
+      const updatedDoc = {
+        $set: {
+          lastSignInTime: req.body?.lastSignInTime
+        }
+      }
+      console.log(updatedDoc)
+      const result = await UserCollection.updateOne(filter, updatedDoc)
+      res.send(result)
+    })
+
+    app.delete("/users/:id", async (req, res) => {
+      const id = req.params.id
+      const query = { _id: new ObjectId(id) }
+
+      const result = await UserCollection.deleteOne(query)
       res.send(result)
     })
 
