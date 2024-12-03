@@ -7,7 +7,11 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb")
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.uida1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
 
 //Middleware
-app.use(cors())
+app.use(
+  cors({
+    origin: ["https://coffee-store-server-peach-three.vercel.app/", "https://coffee-store-ae874.web.app/"]
+  })
+)
 app.use(express.json())
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
